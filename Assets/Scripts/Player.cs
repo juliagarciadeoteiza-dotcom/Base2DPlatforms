@@ -6,10 +6,13 @@ public class Player : MonoBehaviour
 
     Rigidbody2D rb;
     PlayerInput playerInput;
+    SpriteRenderer sr;
+
+//Queremos modificar algo de un componente del G.O
+//1. Definir una variabe del tipo de componente aquí
 
     [SerializeField] float movementForce = 10f;
     [SerializeField] float jumpForce = 5f;
-
 
     Vector2 movementInput;
    public bool isGrounded;
@@ -18,6 +21,9 @@ public class Player : MonoBehaviour
 
         rb = GetComponent<Rigidbody2D>();
         playerInput = GetComponent<PlayerInput>();
+
+        //2. Inicializar la variable con el componente del G.O
+        sr = GetComponent<SpriteRenderer>();
 
         // Modo para evitar colisionar con su collider
         Physics2D.queriesStartInColliders = false;
@@ -28,23 +34,61 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded==true) 
+       /* if (Input.GetKeyDown(KeyCode.Space) && isGrounded==true) 
         {
             Jump(); 
         }
-
+       */
         // movementInput = Input.GetAxis("Horizontal");
         movementInput = playerInput.actions["Move"].ReadValue<Vector2>();   //me va a devolver un vector2 con el input del jugador
         Debug.Log($"Moviendome Update: {movementInput}");
+
+
+
+        if (movementInput.x != 0f)
+        {
+           if(movementInput.x > 0f)
+            {
+                //3. Modificar algún atributo o usar algún metodo
+                sr.flipX = false;
+            }
+            else
+            {
+                sr.flipX = true;
+            }
+        }
+       
     }
 
-    void Jump()
+    public void Jump(InputAction.CallbackContext context)
     {
 
-        rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-        isGrounded = false;
+
+
+
+        //Started
+        //Performed
+
+        if (context.performed && isGrounded)
+        {
+            Debug.Log("Jump");
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            isGrounded = false;
+        }
+
+        //Canceled
+
+
+
+
+
+
+       
+
+
+
     }
-     void FixedUpdate()
+    void FixedUpdate()
     {
 
 
